@@ -1,5 +1,7 @@
 import db from "../database.js";
 import bcrypt from "bcrypt";
+import schemaUsuario from "../schemas/usuarioSchema.js";
+
 
 export function listarUsuarios(req, res) {
   db.get((err, conn) => {
@@ -14,11 +16,16 @@ export function listarUsuarios(req, res) {
 }
 
 export function cadastrarUsuario(req, res) {
-  const { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA } = req.body;
+  const { error, value } = schemaUsuario.validate(req.body, { abortEarly: false });
 
-  if (!SENHA) {
-    return res.status(400).json({ error: "Senha é obrigatória." });
+  if (error) {
+    return res.status(400).json({
+      error: "Dados inválidos",
+      detalhes: error.details.map((d) => d.message)
+    });
   }
+
+  const { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA } = value;
 
   bcrypt.hash(SENHA, 10, (err, senhaCriptografada) => {
     if (err) return res.status(500).json({ error: "Erro ao criptografar senha." });
