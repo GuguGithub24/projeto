@@ -1,4 +1,5 @@
 import db from "../database.js";
+import bcrypt from "bcrypt";
 
 export function listarUsuarios(req, res) {
   db.get((err, conn) => {
@@ -15,22 +16,34 @@ export function listarUsuarios(req, res) {
 export function cadastrarUsuario(req, res) {
   const { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA } = req.body;
 
-  db.get((err, conn) => {
-    if (err) return res.status(500).json({ error: err.message });
+  if (!SENHA) {
+    return res.status(400).json({ error: "Senha é obrigatória." });
+  }
 
-    const sql = `
-      INSERT INTO USUARIOS (NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA) 
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
+  bcrypt.hash(SENHA, 10, (err, senhaCriptografada) => {
+    if (err) return res.status(500).json({ error: "Erro ao criptografar senha." });
 
-    conn.query(sql, [NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA], (err2) => {
-      conn.detach();
-      if (err2) return res.status(500).json({ error: err2.message });
+    db.get((err, conn) => {
+      if (err) return res.status(500).json({ error: err.message });
 
-      res.status(201).json({
-        message: "Usuário cadastrado com sucesso",
-        usuario: { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA }
-      });
+      const sql = `
+        INSERT INTO USUARIOS (NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA) 
+        VALUES (?, ?, ?, ?, ?, ?)
+      `;
+
+      conn.query(
+        sql,
+        [NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, senhaCriptografada],
+        (err2) => {
+          conn.detach();
+          if (err2) return res.status(500).json({ error: err2.message });
+
+          res.status(201).json({
+            message: "Usuário cadastrado com sucesso",
+            usuario: { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO }
+          });
+        }
+      );
     });
   });
 }
