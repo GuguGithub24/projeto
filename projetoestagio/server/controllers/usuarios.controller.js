@@ -1,4 +1,5 @@
 import db from "../database.js";
+import { inserirUsuario } from "../models/usuarioModel.js";
 import bcrypt from "bcrypt";
 import schemaUsuario from "../schemas/usuarioSchema.js";
 
@@ -16,41 +17,23 @@ export function listarUsuarios(req, res) {
 }
 
 export function cadastrarUsuario(req, res) {
-  const { error, value } = schemaUsuario.validate(req.body, { abortEarly: false });
+  const { error } = schemaUsuario.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
 
-  if (error) {
-    return res.status(400).json({
-      error: "Dados inválidos",
-      detalhes: error.details.map((d) => d.message)
-    });
-  }
-
-  const { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA } = value;
+  const { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA } = req.body;
 
   bcrypt.hash(SENHA, 10, (err, senhaCriptografada) => {
     if (err) return res.status(500).json({ error: "Erro ao criptografar senha." });
 
-    db.get((err, conn) => {
-      if (err) return res.status(500).json({ error: err.message });
+    const dados = [NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, senhaCriptografada];
 
-      const sql = `
-        INSERT INTO USUARIOS (NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA) 
-        VALUES (?, ?, ?, ?, ?, ?)
-      `;
+    inserirUsuario(dados, (err2) => {
+      if (err2) return res.status(500).json({ error: err2.message });
 
-      conn.query(
-        sql,
-        [NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, senhaCriptografada],
-        (err2) => {
-          conn.detach();
-          if (err2) return res.status(500).json({ error: err2.message });
-
-          res.status(201).json({
-            message: "Usuário cadastrado com sucesso",
-            usuario: { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO }
-          });
-        }
-      );
+      res.status(201).json({
+        message: "Usuário cadastrado com sucesso",
+        usuario: { NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO }
+      });
     });
   });
 }

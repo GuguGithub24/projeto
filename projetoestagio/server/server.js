@@ -13,7 +13,3 @@ app.use("/", usuariosRoutes);
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-setInterval(() => {
-  console.log("Servidor ainda está vivo...");
-}, 3000);
