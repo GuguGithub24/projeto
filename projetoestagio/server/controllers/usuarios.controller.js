@@ -3,7 +3,6 @@ import { inserirUsuario } from "../models/usuarioModel.js";
 import bcrypt from "bcrypt";
 import schemaUsuario from "../schemas/usuarioSchema.js";
 
-
 export function listarUsuarios(req, res) {
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
