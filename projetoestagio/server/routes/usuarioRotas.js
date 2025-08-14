@@ -4,7 +4,7 @@ import {
   cadastrarUsuario,
   atualizarUsuario,
   deletarUsuario,
-} from "../controllers/usuarios.controller.js";
+} from "../controllers/usuariosController.js";
 
 const router = express.Router();
 

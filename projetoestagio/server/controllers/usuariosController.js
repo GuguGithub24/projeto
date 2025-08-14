@@ -1,5 +1,5 @@
 import db from "../database.js";
-import { inserirUsuario } from "../models/usuarioModel.js";
+import { inserirUsuario } from "./inserirUsuarios.js";
 import bcrypt from "bcrypt";
 import schemaUsuario from "../schemas/usuarioSchema.js";
 
