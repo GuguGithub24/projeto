@@ -5,8 +5,8 @@ export function inserirUsuario(dados, callback) {
     if (err) return callback(err);
     
     const sql = `
-      INSERT INTO USUARIOS (NOME_USUARIO, DEPARTAMENTO, CPF, EMAIL, TIPO_USUARIO, SENHA) 
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO USUARIOS (NOME_USUARIO, CPF, EMAIL, TIPO_USUARIO, SENHA) 
+      VALUES (?, ?, ?, ?, ?)
     `;
     conn.query(sql, dados, (err2) => {
       conn.detach();

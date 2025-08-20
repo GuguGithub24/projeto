@@ -47,7 +47,6 @@ export function atualizarUsuario(req, res) {
     const sql = `
       UPDATE USUARIOS 
       SET NOME_USUARIO = ?, 
-          DEPARTAMENTO = ?, 
           CPF = ?, 
           EMAIL = ?, 
           TIPO_USUARIO = ?, 
