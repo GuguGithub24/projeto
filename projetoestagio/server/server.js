@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import usuariosRoutes from "./routes/usuarioRotas.js";
 import servicosRoutes from "./routes/tipoServicoRotas.js"
+import solicitacoesRoutes from "./routes/solicitacoesRotas.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/", usuariosRoutes);
 app.use("/", servicosRoutes);
+app.use("/", solicitacoesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
