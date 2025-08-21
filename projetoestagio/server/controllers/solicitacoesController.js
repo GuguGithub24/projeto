@@ -103,3 +103,22 @@ export function alterarStatus(req, res) {
     });
   });
 }
+
+export function deletarSolicitacao(req, res) {
+  const id = parseInt(req.params.id);
+
+  db.get((err, conn) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    const sql = "DELETE FROM SOLICITACOES WHERE ID_SOLICITACAO = ?";
+
+    conn.query(sql, [id], (err2) => {
+      conn.detach();
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      res.status(200).json({
+        message: `Solicitação com ID ${id} deletada com sucesso.`,
+      });
+    });
+  });
+}
