@@ -1,9 +1,9 @@
 import db from "../database.js";
 
 export function cadastrarSolicitacao(req, res) {
-  const { ID_SERVICO, ID_USUARIO_SOLICITANTE, ID_USUARIO_RESPONSAVEL, DESCRICAO } = req.body;
+  const { ID_USUARIO_SOLICITANTE, ID_USUARIO_RESPONSAVEL, DESCRICAO } = req.body;
 
-  if (!ID_SERVICO || !ID_USUARIO_SOLICITANTE || !DESCRICAO) {
+  if (!ID_USUARIO_SOLICITANTE || !DESCRICAO) {
     return res.status(400).json({ error: "Preencha todos os campos obrigatórios." });
   }
 
@@ -12,14 +12,12 @@ export function cadastrarSolicitacao(req, res) {
 
     const sql = `
       INSERT INTO SOLICITACOES (
-        ID_SERVICO, ID_USUARIO_SOLICITANTE, ID_USUARIO_RESPONSAVEL, DESCRICAO, STATUS
-      ) VALUES (?, ?, ?, ?, ?)
+        ID_USUARIO_SOLICITANTE, DESCRICAO, STATUS
+      ) VALUES (?, ?, ?)
     `;
 
     const params = [
-      ID_SERVICO,
       ID_USUARIO_SOLICITANTE,
-      ID_USUARIO_RESPONSAVEL || null,
       DESCRICAO,
       "ABERTA"
     ];
@@ -27,12 +25,12 @@ export function cadastrarSolicitacao(req, res) {
     conn.query(sql, params, (err2) => {
       conn.detach();
       if (err2) {
-        console.error("Erro ao inserir solicitação:", err2); // <- log detalhado
+        console.error("Erro ao inserir solicitação:", err2);
         return res.status(500).json({ error: err2.message });
       }
       res.status(201).json({
         message: "Solicitação criada com sucesso!",
-        dados: { ID_SERVICO, ID_USUARIO_SOLICITANTE, ID_USUARIO_RESPONSAVEL, DESCRICAO, STATUS: "ABERTA" }
+        dados: { ID_USUARIO_SOLICITANTE, ID_USUARIO_RESPONSAVEL, DESCRICAO, STATUS: "ABERTA" }
       });
     });
   });
