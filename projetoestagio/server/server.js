@@ -5,6 +5,7 @@ import servicosRoutes from "./routes/tipoServicoRotas.js"
 import solicitacoesRoutes from "./routes/solicitacoesRotas.js";
 import setoresRoutes from "./routes/setorRotas.js";
 import historicoRoutes from "./routes/historicoSolicitacoesRotas.js";
+import estoquePecasRoutes from "./routes/estoquePecasRotas.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use("/", servicosRoutes);
 app.use("/", solicitacoesRoutes);
 app.use("/", setoresRoutes);
 app.use("/", historicoRoutes);
+app.use("/", estoquePecasRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
