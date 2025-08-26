@@ -1,28 +1,28 @@
 import db from "../database.js";
 
 export function cadastrarPeca(req, res) {
-  const { NOME_PECA, DESCRICAO, QUANTIDADE } = req.body;
+  const { NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO } = req.body;
 
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    conn.query("INSERT INTO ESTOQUE_PECAS (NOME_PECA, DESCRICAO, QUANTIDADE) VALUES (?, ?, ?)", [NOME_PECA, DESCRICAO, QUANTIDADE], (err2) => {
+    conn.query("INSERT INTO PECAS (NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO) VALUES (?, ?, ?, ?, ?, ?)", [NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO], (err2) => {
       conn.detach();
       if (err2) return res.status(500).json({ error: err2.message });
 
       res.status(201).json({
         message: "Peça cadastrada com sucesso",
-        peca: { NOME_PECA, DESCRICAO, QUANTIDADE }
+        peca: { NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO }
       });
     });
   });
 }
 
-export function listarEstoquePecas(req, res) {
+export function listarPecas(req, res) {
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    conn.query("SELECT * FROM ESTOQUE_PECAS", (err2, result) => {
+    conn.query("SELECT * FROM PECAS", (err2, result) => {
       conn.detach();
       if (err2) return res.status(500).json({ error: err2.message });
       res.json(result);
@@ -30,13 +30,13 @@ export function listarEstoquePecas(req, res) {
   });
 }
 
-export function listarEstoquePecasPorId(req, res) {
+export function listarPecasPorId(req, res) {
   const { id } = req.params;
 
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    conn.query("SELECT * FROM ESTOQUE_PECAS WHERE ID_PECA = ?", [id], (err2, result) => {
+    conn.query("SELECT * FROM PECAS WHERE ID_PECA = ?", [id], (err2, result) => {
       conn.detach();
       if (err2) return res.status(500).json({ error: err2.message });
       res.json(result);
@@ -46,29 +46,32 @@ export function listarEstoquePecasPorId(req, res) {
 
 export function atualizarPeca(req, res) {
   const { id } = req.params;
-  const { NOME_PECA, DESCRICAO, QUANTIDADE } = req.body;
+  const { NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO } = req.body;
 
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
 
     const sql = `
-      UPDATE ESTOQUE_PECAS
-      SET NOME_PECA = ?,
+      UPDATE PECAS
+      SET NOME = ?,
           DESCRICAO = ?,
-          QUANTIDADE = ?
+          MODELO = ?,
+          MARCA = ?,
+          FORNECEDOR = ?,
+          PATRIMONIO = ?
       WHERE ID_PECA = ?
     `;
 
     conn.query(
       sql,
-      [NOME_PECA, DESCRICAO, QUANTIDADE, parseInt(id)],
+      [NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO, parseInt(id)],
       (err2) => {
         conn.detach();
         if (err2) return res.status(500).json({ error: err2.message });
 
         res.status(200).json({
           message: "Peça atualizada com sucesso",
-          peca: { ID_PECA: id, NOME_PECA, DESCRICAO, QUANTIDADE }
+          peca: { ID: id, NOME, DESCRICAO, MODELO, MARCA, FORNECEDOR, PATRIMONIO }
         });
       }
     );
@@ -81,7 +84,7 @@ export function deletarPeca(req, res) {
   db.get((err, conn) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    const sql = "DELETE FROM ESTOQUE_PECAS WHERE ID_PECA = ?";
+    const sql = "DELETE FROM PECAS WHERE ID_PECA = ?";
 
     conn.query(sql, [id], (err2) => {
       conn.detach();

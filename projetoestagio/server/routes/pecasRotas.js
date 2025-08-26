@@ -1,16 +1,16 @@
 import express from "express";
 import {
     cadastrarPeca,
-    listarEstoquePecas,
-    listarEstoquePecasPorId,
+    listarPecas,
+    listarPecasPorId,
     atualizarPeca,
     deletarPeca
-} from "../controllers/estoquePecasController.js";
+} from "../controllers/pecasController.js";
 const router = express.Router();
 
 router.post("/pecas", cadastrarPeca);
-router.get("/pecas", listarEstoquePecas);
-router.get("/pecas/:id", listarEstoquePecasPorId);
+router.get("/pecas", listarPecas);
+router.get("/pecas/:id", listarPecasPorId);
 router.put("/pecas/:id", atualizarPeca);
 router.delete("/pecas/:id", deletarPeca);
 
